@@ -1,0 +1,21 @@
+{
+    "name": "utelecom/api-prostotv-php",
+    "description": "PHP library for working with ProstoTV API",
+    "homepage": "https://github.com/utelecom/api-prostotv-php",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Andrey Poprotsky",
+            "email": "poprotsky@mail.ru",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "UTG\\": "src"
+        }
+    }
+}
