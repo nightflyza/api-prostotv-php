@@ -41,7 +41,7 @@ class ProstoTV {
             $context['http']['header'][] = "Authorization: Bearer " . $this->token;
         if ( $method != 'GET' )
             $context['http']['content'] = json_encode($data);
-        $context = stream_context_create($content);
+        $context = stream_context_create($context);
         try {
             $content = file_get_contents($this->url . $resource, false, $context);
         } catch (Exception $e) {
@@ -54,7 +54,7 @@ class ProstoTV {
     }
 
     private function getToken() {
-        $data = $this->request('POST', '/token', ['login' => $this->login, 'password' => $this->password]);
+        $data = $this->request('POST', '/tokens', ['login' => $this->login, 'password' => $this->password]);
         $this->token = $data['token'];
     }
 
