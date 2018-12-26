@@ -29,6 +29,10 @@ class ProstoTV {
         return $this->request('PUT', $resource, $data);
     }
 
+    public function delete($resource, $data) {
+        return $this->request('DELETE', $resource, $data);
+    }
+    
     private function request($method, $resource, $data = []) {
         if ( !$this->token && $method != 'POST' && $resource != '/token' )
             $this->getToken();
