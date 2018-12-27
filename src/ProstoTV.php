@@ -30,16 +30,16 @@ class ProstoTV {
         return $this->request('GET', $resource);
     }
 
-    public function post($resource, $data) {
+    public function post($resource, $data = []) {
         return $this->request('POST', $resource, $data);
     }
 
-    public function put($resource, $data) {
+    public function put($resource, $data = []) {
         return $this->request('PUT', $resource, $data);
     }
 
-    public function delete($resource, $data) {
-        return $this->request('DELETE', $resource, $data);
+    public function delete($resource) {
+        return $this->request('DELETE', $resource);
     }
 
     private function request($method, $resource, $data = []) {
@@ -57,7 +57,6 @@ class ProstoTV {
             $context['http']['content'] = json_encode($data);
         $context = stream_context_create($context);
         try {
-            echo $this->url . $resource . "\n";
             $content = file_get_contents($this->url . $resource, false, $context);
             $content = json_decode($content, true);
         } catch (Exception $e) {
