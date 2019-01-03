@@ -29,7 +29,7 @@ $object = $api->post('/objects', ['first_name' => 'Иван', 'last_name' => 'И
 ```
 Пополнение счета
 ```php
-$api->post('/objects/'.$object['id'].'/operations', ['id' => 42, 'sum' => 100]);
+$api->post('/objects/'.$object['id'].'/operations', ['operation_id' => 42, 'sum' => 100]);
 ```
 Активация услуги
 ```php
