@@ -9,7 +9,7 @@ class ProstoTV {
             $code,
             $error,
             $token,
-            $url = 'https://api.prosto.tv/v1';
+            $url = 'https://api.prosto.tv/v1/';
 
     public function __construct($login, $password, $url = null) {
         if ( $url )
@@ -57,7 +57,7 @@ class ProstoTV {
             $context['http']['content'] = json_encode($data);
         $context = stream_context_create($context);
         try {
-            $content = file_get_contents($this->url . $resource, false, $context);
+            $content = file_get_contents($this->url . ltrim($resource, '/ '), false, $context);
             $content = json_decode($content, true);
         } catch (Exception $e) {
             $this->error = $e;
