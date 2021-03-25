@@ -2,58 +2,145 @@
 
 namespace UTG;
 
+/**
+ * ProstoTV API PHP client
+ */
 class ProstoTV {
 
-    private $login,
-            $password,
-            $code,
-            $error,
-            $token,
-            $url = 'https://api.prosto.tv/v1/';
+    /**
+     * Contains current instance login
+     *
+     * @var string
+     */
+    protected $login = '';
 
+    /**
+     * Contains current instance password
+     *
+     * @var string
+     */
+    protected $password = '';
+
+    /**
+     * Contains last request error
+     *
+     * @var string
+     */
+    protected $error = '';
+
+    /**
+     * Contains current instance temporary token
+     *
+     * @var string
+     */
+    protected $token = '';
+
+    /**
+     * Contains basic API URL
+     *
+     * @var string
+     */
+    protected $url = 'https://api.prosto.tv/v1/';
+
+    /**
+     * Thats constructor. What did you expect there?
+     * 
+     * @param string $login
+     * @param string $password
+     * @param string $url
+     */
     public function __construct($login, $password, $url = null) {
-        if ( $url )
+        if ($url) {
             $this->url = $url;
+        }
         $this->login = $login;
         $this->password = $password;
         $this->token = null;
     }
 
+    /**
+     * Public getter for last request status or error properties
+     * 
+     * @param string $name
+     * 
+     * @return string
+     */
     public function __get($name) {
-        switch ( $name ) {
-            case 'status': return $this->status; break;
-            case 'error':  return $this->error;  break;
+        switch ($name) {
+            case 'status': return $this->status;
+                break;
+            case 'error': return $this->error;
+                break;
         }
     }
 
+    /**
+     * Performs some GET request to remote API
+     * 
+     * @param string $resource
+     * 
+     * @return string
+     */
     public function get($resource) {
-        return $this->request('GET', $resource);
+        return ($this->request('GET', $resource));
     }
 
-    public function post($resource, $data = []) {
-        return $this->request('POST', $resource, $data);
+    /**
+     * Performs some POST request to remote API
+     * 
+     * @param string $resource
+     * @param array $data
+     * 
+     * @return string
+     */
+    public function post($resource, $data = array()) {
+        return ($this->request('POST', $resource, $data));
     }
 
-    public function put($resource, $data = []) {
-        return $this->request('PUT', $resource, $data);
+    /**
+     * Performs PUT request to some remote API resource
+     * 
+     * @param string $resource
+     * @param array $data
+     * 
+     * @return string
+     */
+    public function put($resource, $data = array()) {
+        return ($this->request('PUT', $resource, $data));
     }
 
+    /**
+     * Performs DELETE request to some remote API resource
+     * 
+     * @param string $resource
+     * 
+     * @return string
+     */
     public function delete($resource) {
-        return $this->request('DELETE', $resource);
+        return ($this->request('DELETE', $resource));
     }
 
-    private function request($method, $resource, $data = []) {
-        if ( !$this->token && ($method != 'POST' || $resource != '/tokens') )
+    /**
+     * Pushes request of some specified method to remote API
+     * 
+     * @param string $method
+     * @param string $resource
+     * @param array $data
+     * 
+     * @return boolean
+     */
+    protected function request($method, $resource, $data = array()) {
+        if (!$this->token && ($method != 'POST' || $resource != '/tokens'))
             $this->getToken();
-        $context = ['http' => [
+        $context = array('http' => array(
                 'method' => $method,
-                'header' => ["Content-Type: application/json; charset=utf-8"],
+                'header' => array("Content-Type: application/json; charset=utf-8"),
                 'ignore_errors' => true,
                 'timeout' => 60,
-        ]];
-        if ( $this->token )
+        ));
+        if ($this->token)
             $context['http']['header'][] = "Authorization: Bearer " . $this->token;
-        if ( $method != 'GET' )
+        if ($method != 'GET')
             $context['http']['content'] = json_encode($data);
         $context = stream_context_create($context);
         try {
@@ -61,21 +148,27 @@ class ProstoTV {
             $content = json_decode($content, true);
         } catch (Exception $e) {
             $this->error = $e;
-            return false;
+            return (false);
         }
+
         $answer = explode(' ', $http_response_header[0]);
         $this->status = intval($answer[1]);
-        if ( in_array($this->status, [200, 201]) ) {
+        if (in_array($this->status, array(200, 201))) {
             $this->error = null;
-            return $content;
+            return ($content);
         } else {
             $this->error = $content;
-            return false;
+            return (false);
         }
     }
 
-    private function getToken() {
-        $data = $this->request('POST', '/tokens', ['login' => $this->login, 'password' => $this->password]);
+    /**
+     * Sets temporary token to current instance
+     * 
+     * @return void
+     */
+    protected function getToken() {
+        $data = $this->request('POST', '/tokens', array('login' => $this->login, 'password' => $this->password));
         $this->token = $data['token'];
     }
 
