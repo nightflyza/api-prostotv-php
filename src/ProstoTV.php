@@ -22,11 +22,18 @@ class ProstoTV {
     protected $password = '';
 
     /**
+     * Contains last request status code
+     *
+     * @var int
+     */
+    protected $status = 0;
+
+    /**
      * Contains last request error
      *
-     * @var string
+     * @var int
      */
-    protected $error = '';
+    protected $error = 0;
 
     /**
      * Contains current instance temporary token
@@ -59,7 +66,7 @@ class ProstoTV {
     }
 
     /**
-     * Public getter for last request status or error properties
+     * Magic getter for last request status or error properties
      * 
      * @param string $name
      * 
@@ -67,9 +74,11 @@ class ProstoTV {
      */
     public function __get($name) {
         switch ($name) {
-            case 'status': return $this->status;
+            case 'status':
+                return ($this->status);
                 break;
-            case 'error': return $this->error;
+            case 'error':
+                return ($this->error);
                 break;
         }
     }
