@@ -88,7 +88,7 @@ class ProstoTV {
      * 
      * @param string $resource
      * 
-     * @return string
+     * @return string/bool
      */
     public function get($resource) {
         return ($this->request('GET', $resource));
@@ -139,19 +139,27 @@ class ProstoTV {
      * @return boolean
      */
     protected function request($method, $resource, $data = array()) {
-        if (!$this->token && ($method != 'POST' || $resource != '/tokens'))
+        if (!$this->token && ($method != 'POST' || $resource != '/tokens')) {
             $this->getToken();
+        }
+
         $context = array('http' => array(
                 'method' => $method,
                 'header' => array("Content-Type: application/json; charset=utf-8"),
                 'ignore_errors' => true,
                 'timeout' => 60,
         ));
-        if ($this->token)
+
+        if ($this->token) {
             $context['http']['header'][] = "Authorization: Bearer " . $this->token;
-        if ($method != 'GET')
+        }
+
+        if ($method != 'GET') {
             $context['http']['content'] = json_encode($data);
+        }
+
         $context = stream_context_create($context);
+
         try {
             $content = file_get_contents($this->url . ltrim($resource, '/ '), false, $context);
             $content = json_decode($content, true);
